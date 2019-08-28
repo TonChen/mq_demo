@@ -23,6 +23,7 @@ import javax.annotation.Resource;
 @Configuration
 public class RabbitMQConfig {
 
+
     public static final String DEFAULT_EXCHANGE = "default_exchange";
     public static final String FANOUT_EXCHANGE = "fanout_exchange";
     public static final String TOPIC_EXCHANGE = "topic_exchange";
@@ -162,7 +163,9 @@ public class RabbitMQConfig {
         SimpleRabbitListenerContainerFactory factory = new SimpleRabbitListenerContainerFactory();
         factory.setConnectionFactory(connectionFactory);
         //这个参数设置，接收消息端，接收的最大消息数量（包括使用get、consume）,一旦到达这个数量，客户端不在接收消息。0为不限制。默认值为3.
-        //factory.setPrefetchCount(5);
+        // 生产端不会限流，只有消费端限流；当机器突然有上万条消息，不做限流，可能会导致消费端服务器崩溃。
+        // 非自动签收消息的情况下，一定数量消息未被确认前(通过consumer或channel设置qos值)，不进行消费新的消息
+        factory.setPrefetchCount(5);
         // 确认模式：自动，默认
         factory.setAcknowledgeMode(AcknowledgeMode.MANUAL);
         // 接收端类型转化pojo,需要序列化
@@ -170,7 +173,7 @@ public class RabbitMQConfig {
         // 设置消费者线程数
         factory.setConcurrentConsumers(5);
         // 设置最大消费者线程数
-        //factory.setMaxConcurrentConsumers(10);
+        factory.setMaxConcurrentConsumers(10);
 //        factory.setConsumerTagStrategy(s -> {
 //            log.info("消费确认：{}", s);
 //            return "RGP订单系统ADD处理逻辑消费者";
@@ -191,6 +194,8 @@ public class RabbitMQConfig {
         RabbitTemplate template = new RabbitTemplate(connectionFactory);
         // 发送端类型转化pojo,需要序列化
         template.setMessageConverter(new Jackson2JsonMessageConverter());
+        // Mandatory：true-监听器接受到这些不可达的消息，false-broker会自动删除这些消息。
+        template.setMandatory(true);
         return template;
     }
 }

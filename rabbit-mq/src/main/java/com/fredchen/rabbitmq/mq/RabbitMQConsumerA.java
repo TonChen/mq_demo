@@ -25,6 +25,7 @@ public class RabbitMQConsumerA {
     @RabbitHandler
     public void process(String msg, Message message, Channel channel) throws IOException {
         log.info("消费者A消费第{}条消息，消息：{}, deliveryTag：{}", ++count, msg, message.getMessageProperties().getDeliveryTag());
+        channel.basicQos(1024 * 1024,5, true);
         channel.basicAck(message.getMessageProperties().getDeliveryTag(), true);
     }
 }

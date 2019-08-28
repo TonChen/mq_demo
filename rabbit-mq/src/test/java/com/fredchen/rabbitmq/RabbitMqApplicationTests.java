@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.HashMap;
+
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @Slf4j
@@ -18,7 +20,7 @@ public class RabbitMqApplicationTests {
 
     @Test
     public void producerTest() {
-        rabbitMQProducer.send("我的测试");
+        rabbitMQProducer.send("我的测试", new HashMap<>());
         while (true) {
             log.info("system is running");
         }
