@@ -20,7 +20,7 @@
         <lombok.version>1.18.8</lombok.version>
         <jackson-databind.version>2.9.9</jackson-databind.version>
         <spring-boot-starter-amqp.version>2.1.7.RELEASE</spring-boot-starter-amqp.version>
-        <spring-boot.version>2.1.2.RELEASE</spring-boot.version>
+        <spring-boot.version>2.5.12</spring-boot.version>
     </properties>
 
     <modules>
